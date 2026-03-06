@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trigger Screenshot</title>
+  <title>Trigger Screenshot (No Flask)</title>
   <style>
     body { font-family: Arial, sans-serif; background: #36393f; color: white; text-align: center; padding: 80px; }
     h1 { color: #7289da; }
@@ -22,8 +22,8 @@
   </style>
 </head>
 <body>
-  <h1>📸 Screenshot Trigger (GitHub Pages)</h1>
-  <p>Make sure the Python script is running, then click the button below.</p>
+  <h1>📸 Screenshot Trigger (GitHub Pages → Local Python)</h1>
+  <p>Run the Python script first, then click below. It captures YOUR screen and sends to Discord.</p>
   
   <button onclick="triggerScreenshot()">Take & Send Full Screen Screenshot</button>
   
@@ -32,19 +32,21 @@
   <script>
     async function triggerScreenshot() {
       const status = document.getElementById('status');
-      status.textContent = "📡 Contacting local Python script...";
+      status.textContent = "📡 Contacting local server...";
 
       try {
         const res = await fetch('http://localhost:5000/screenshot');
+        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
         const data = await res.json();
-        
         if (data.status === "success") {
           status.innerHTML = '✅ <span style="color:#43b581">Screenshot sent to Discord!</span>';
         } else {
-          status.innerHTML = '❌ ' + data.message;
+          status.innerHTML = '❌ ' + (data.message || 'Unknown error');
         }
       } catch (err) {
-        status.innerHTML = '❌ Python script not running or blocked by browser.<br>Run screenshot_server.py first!';
+        status.innerHTML = '❌ Could not reach local server.<br>Make sure screenshot_server_no_flask.py is running!';
+        console.error(err);
       }
     }
   </script>
