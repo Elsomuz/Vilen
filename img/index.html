@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trigger Screenshot</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #36393f; color: white; text-align: center; padding: 80px; }
+    h1 { color: #7289da; }
+    button {
+      background: #5865f2;
+      color: white;
+      border: none;
+      padding: 20px 50px;
+      font-size: 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 30px;
+    }
+    button:hover { background: #4752c4; }
+    #status { font-size: 20px; margin-top: 20px; min-height: 30px; }
+  </style>
+</head>
+<body>
+  <h1>📸 Screenshot Trigger (GitHub Pages)</h1>
+  <p>Make sure the Python script is running, then click the button below.</p>
+  
+  <button onclick="triggerScreenshot()">Take & Send Full Screen Screenshot</button>
+  
+  <div id="status"></div>
+
+  <script>
+    async function triggerScreenshot() {
+      const status = document.getElementById('status');
+      status.textContent = "📡 Contacting local Python script...";
+
+      try {
+        const res = await fetch('http://localhost:5000/screenshot');
+        const data = await res.json();
+        
+        if (data.status === "success") {
+          status.innerHTML = '✅ <span style="color:#43b581">Screenshot sent to Discord!</span>';
+        } else {
+          status.innerHTML = '❌ ' + data.message;
+        }
+      } catch (err) {
+        status.innerHTML = '❌ Python script not running or blocked by browser.<br>Run screenshot_server.py first!';
+      }
+    }
+  </script>
+</body>
+</html>
